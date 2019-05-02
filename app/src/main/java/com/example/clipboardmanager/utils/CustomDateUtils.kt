@@ -65,8 +65,6 @@ class CustomDateUtils {
             c.setTime(fromDate);
             c.add(Calendar.MONTH,2)
             if(c.getTime().compareTo(Date(toDate)) > 0) return true
-            //check the internet for the iteration of dates
-            //using broadcast receivers for intent
             return false
         }
 
@@ -77,10 +75,7 @@ class CustomDateUtils {
             c.setTime(fromDate);
             c.add(Calendar.MONTH,2)
             if(c.getTime().compareTo(Date(toDate)) < 0) return true
-            //check the internet for the iteration of dates
-            //using broadcast receivers for intent
             return false
         }
-        //for further months, use the !isLessThanSymbol
     }
 }

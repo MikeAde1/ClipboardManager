@@ -31,6 +31,7 @@ class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipBoardRepository = ClipBoardRepository(application)
     }
+
     override fun onStopJob(job: JobParameters): Boolean {
         Toast.makeText(applicationContext,"service ended!!!", LENGTH_SHORT).show()
         return true
@@ -47,17 +48,6 @@ class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
         thread.start()
         return true
     }
-
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //Toast.makeText(applicationContext, "Job Service Destroyed", LENGTH_SHORT).show()
-        //InsertionUtils().scheduleChargingReminder(applicationContext)
-    }
-
-
-
 
 
     private fun checkForDuplicate(pasteData: String) {
@@ -77,21 +67,4 @@ class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
             Toast.LENGTH_SHORT
         ).show()
     }
-
-    /*private class LoadService(var context: Context) :AsyncTask<Unit,Unit,Unit>(){
-        override fun doInBackground(vararg params: Unit?) {
-            context.startService(Intent(con))
-        }
-        val primaryClipChangedListener = object: ClipboardManager.OnPrimaryClipChangedListener{
-            override fun onPrimaryClipChanged() {
-                var pasteData: String = ""
-                if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription()!!.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)){
-                    val item = clipboard.primaryClip?.getItemAt(0)?.text
-                    pasteData = item.toString()
-                    checkForDuplicate(pasteData)
-
-                }
-            }
-        }
-    }*/
 }
