@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.example.clipboardmanager.R
 
-class Settings : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,7 +15,6 @@ class Settings : AppCompatActivity() {
                 .replace(R.id.settings, SettingsFragment())
                 .commitNow()
         }
-
     }
 
 

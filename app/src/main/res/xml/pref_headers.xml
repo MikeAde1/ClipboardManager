@@ -2,7 +2,7 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header
+    <!--<header
             android:fragment="com.example.clipboardmanager.SettingsActivity$GeneralPreferenceFragment"
             android:title="@string/pref_header_general"
             android:icon="@drawable/ic_info_black_24dp"/>
@@ -15,6 +15,6 @@
     <header
             android:fragment="com.example.clipboardmanager.SettingsActivity$DataSyncPreferenceFragment"
             android:title="@string/pref_header_data_sync"
-            android:icon="@drawable/ic_sync_black_24dp"/>
+            android:icon="@drawable/ic_sync_black_24dp"/>-->
 
 </preference-headers>

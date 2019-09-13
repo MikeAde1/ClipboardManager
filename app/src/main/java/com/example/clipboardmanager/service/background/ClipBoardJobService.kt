@@ -14,6 +14,7 @@ import android.widget.Toast.LENGTH_SHORT
 import com.example.clipboardmanager.service.model.ClipboardEntity
 import com.example.clipboardmanager.service.repository.ClipBoardRepository
 import com.firebase.jobdispatcher.JobParameters
+import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
@@ -50,7 +51,7 @@ class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
     }
 
 
-    private fun checkForDuplicate(pasteData: String) {
+   /* private fun checkForDuplicate(pasteData: String) {
         val list: List<ClipboardEntity> = clipBoardRepository.loadNotes()
         val size = list.size
         Log.d("######", size.toString())
@@ -61,10 +62,10 @@ class ClipBoardJobService: com.firebase.jobdispatcher.JobService() {
                 copies = copies + 1
             }
         }
-        val clipboardEntity = ClipboardEntity(note = pasteData, time = System.currentTimeMillis().toString(), number = copies)
+        val clipboardEntity = ClipboardEntity(note = pasteData, date = Date(System.currentTimeMillis()), number = copies)
         clipBoardRepository.insert(clipboardEntity)
         Toast.makeText(applicationContext, "New note copied: $pasteData \n Note has been copied $copies times" ,
             Toast.LENGTH_SHORT
         ).show()
-    }
+    }*/
 }

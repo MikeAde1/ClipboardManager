@@ -1,65 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.example.clipboardmanager">
+          xmlns:dist="http://schemas.android.com/apk/distribution"
+          package="com.example.clipboardmanager">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
 
-        <activity android:name=".view.ui.MainActivity">
+        <activity android:name=".view.ui.SettingsActivity"
+                  android:label="Settings"
+                  android:parentActivityName=".view.ui.MainActivity">
+        </activity>
+
+        <activity android:name=".view.ui.MainActivity"
+                  android:label="ClipBoardManager"
+                  android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <service
-            android:name=".service.background.ClipBoardService"
-            android:enabled="true" />
-
-        <!--<receiver android:name=".service.background.PowerConnectionReceiver">
+                android:name=".service.background.ClipBoardService"
+                android:enabled="true"/>
+        <!--
+<receiver android:name=".service.background.PowerConnectionReceiver">
             <intent-filter>
              &lt;!&ndash;   <action android:name="com.gionee.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />&ndash;&gt;
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
             </intent-filter>
-        </receiver>-->
-
+        </receiver>
+        -->
         <service
-            android:name=".service.background.ClipBoardJobService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE">
+                android:name=".service.background.ClipBoardJobService"
+                android:enabled="true"
+                android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>
         </service>
         <service
-            android:name=".service.background.ClipJobIntentService"
-            android:enabled="true"
-            android:exported="true" />
+                android:name=".service.background.ClipJobIntentService"
+                android:enabled="true"
+                android:exported="true"/>
+        <service android:name=".service.background.FloatingIconService"/>
 
         <receiver
-            android:name="com.example.clipboardmanager.service.AutostartReceiver"
-            android:enabled="true"
-            android:exported="true">
+                android:name=".service.AutostartReceiver"
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

@@ -1,19 +1,17 @@
 package com.example.clipboardmanager.service.model
 
 import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.*
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database (entities = [ClipboardEntity::class], version = 3)
+@Database (entities = [ClipboardEntity::class], version = 5, exportSchema = false)
+@TypeConverters(Converter::class)
 
 abstract class ClipDatabase : RoomDatabase() {
     abstract fun clipBoardDao() :ClipBoardDao
-
 
     companion object{
 
@@ -22,7 +20,7 @@ abstract class ClipDatabase : RoomDatabase() {
         fun getInstance(context: Context): ClipDatabase? {
             if (instance == null) {
                 synchronized(ClipDatabase::class) {
-                    // 2 threads can be running as the same time
+                    // 2 threads can be running at the same time
                     //for instantiating room database when it is empty, this makes it always
                     //and always non null
                     instance = Room.databaseBuilder(

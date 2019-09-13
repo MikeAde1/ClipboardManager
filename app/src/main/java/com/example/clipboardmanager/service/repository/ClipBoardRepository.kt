@@ -4,24 +4,23 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.example.clipboardmanager.service.model.ClipBoardDao
 import com.example.clipboardmanager.service.model.ClipDatabase
 import com.example.clipboardmanager.service.model.ClipboardEntity
 
-public class ClipBoardRepository(application: Application)  {
+class ClipBoardRepository(context: Context) {
     private val clipDao: ClipBoardDao
 
     private val allNotes: LiveData<List<ClipboardEntity>>
 
-    private var note_list2: List<ClipboardEntity>? = ArrayList()
-
-    private lateinit var note: MutableList<ClipboardEntity>
+    //private lateinit var note: MutableList<ClipboardEntity>
 
 
     init {
-        val clipDatabase: ClipDatabase = ClipDatabase.getInstance(application.applicationContext)!!
+        val clipDatabase: ClipDatabase = ClipDatabase.getInstance(context.applicationContext)!!
         clipDao = clipDatabase.clipBoardDao()
         allNotes = clipDao.getAll()
     }
@@ -44,10 +43,6 @@ public class ClipBoardRepository(application: Application)  {
 
     fun loadDataById(item_id: Int): LiveData<ClipboardEntity> {
        return clipDao.loadDataById(item_id)
-    }
-
-    fun getItembyNote(note: String): List<ClipboardEntity>? {
-        return note_list2
     }
 
     private class InsertCopiedNoteAsyncTask(copiedDao: ClipBoardDao): AsyncTask<ClipboardEntity, Unit, Unit>(){
@@ -98,21 +93,4 @@ public class ClipBoardRepository(application: Application)  {
         /*Log.d("####", note.toString())
         return note*/
     }
-
-    /*
-    companion object {
-        class LoadNoteAsyncTask(clipBoardRepositor: ClipBoardDao,
-                                private val clipBoardRepository: ClipBoardRepository
-        ):  AsyncTask<Unit, Unit, List<String>>(){
-            val copied_dao = clipBoardRepository
-            override fun doInBackground(vararg params: Unit?): List<String> {
-                return copied_dao.selectNotes()
-            }
-
-            override fun onPostExecute(result: List<String>) {
-                super.onPostExecute(result)
-                clipBoardRepository.note = result
-            }
-        }
-    }*/
 }

@@ -1,16 +1,19 @@
 package com.example.clipboardmanager.viewModel
 
+import android.app.Application
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import android.content.Context
 import com.example.clipboardmanager.service.model.ClipDatabase
 import kotlin.Suppress as Suppress1
 
 
-public class ClipBoardViewModelFactory(val cDb: ClipDatabase, val mDataId: Int): ViewModelProvider.NewInstanceFactory() {
+class ClipBoardViewModelFactory(val context: Context): ViewModelProvider.NewInstanceFactory() {
 
 
-    @Suppress1("UNCHECKED_CAST")
+
+    @kotlin.Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ClipBoardViewModelFactory(cDb, mDataId) as T
+        return ClipBoardListViewModel(context.applicationContext) as T
     }
 }

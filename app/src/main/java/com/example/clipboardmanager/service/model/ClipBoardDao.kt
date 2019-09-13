@@ -4,16 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.persistence.room.*
 
-
-
-
     @Dao
     interface ClipBoardDao{
 
-        @Query("SELECT * FROM word_table ORDER BY id DESC")
-        fun getAll(): LiveData<List<ClipboardEntity>>
+        @Query("SELECT * FROM word_table WHERE (formattedDate >= date('now', '-20 day')) ORDER BY id DESC")
+        fun getAll():LiveData<List<ClipboardEntity>>
 
-        @Insert(onConflict = OnConflictStrategy.FAIL)
+        @Insert(onConflict = OnConflictStrategy.ABORT)
         fun insert(todo: ClipboardEntity)
 
         @Delete
@@ -25,9 +22,6 @@ import android.arch.persistence.room.*
         @Query("SELECT * FROM word_table WHERE id = :id")
         fun loadDataById(id: Int): LiveData<ClipboardEntity>
 
-        @Query("SELECT * FROM word_table")
-        fun getItemByNote(): List<ClipboardEntity>?
-
-        @Query("SELECT note, time, duplicated FROM word_table")
+        @Query("SELECT note,time,formattedDate,duplicated FROM word_table")
         fun selectNotes(): List<ClipboardEntity>
     }

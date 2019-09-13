@@ -1,14 +1,11 @@
 package com.example.clipboardmanager.view.ui
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -18,10 +15,11 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 
 import com.example.clipboardmanager.R
-import com.example.clipboardmanager.service.model.ClipDatabase
 import com.example.clipboardmanager.service.model.ClipboardEntity
 import com.example.clipboardmanager.viewModel.ClipBoardListViewModel
 import com.example.clipboardmanager.viewModel.ClipBoardViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -51,7 +49,7 @@ class EditClipBoardFragment : Fragment() , View.OnClickListener{
         val id = args.getInt("pass",0)
         object_id = id
 
-        viewModel = ViewModelProviders.of(this).get(ClipBoardListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, context?.let { ClipBoardViewModelFactory(it) }).get(ClipBoardListViewModel::class.java)
         clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     }
 
@@ -65,9 +63,7 @@ class EditClipBoardFragment : Fragment() , View.OnClickListener{
             viewModel.loadData(object_id).removeObservers(this)
             editText.setText(it?.note)
         })
-
         btn_update.setOnClickListener(this)
-
         return view
     }
 
@@ -76,18 +72,23 @@ class EditClipBoardFragment : Fragment() , View.OnClickListener{
      */
     override fun onClick(v: View?) {
         if (v?.id == R.id.btn_update) {
-
-            val clipboardEntity = ClipboardEntity(object_id, editText.text.toString(), System.currentTimeMillis().toString())
-            Toast.makeText(context, editText.text.toString(), LENGTH_SHORT).show()
-            viewModel.updateNote(clipboardEntity)
-            Toast.makeText(context, "Saved!", LENGTH_SHORT).show()
-            activity?.onBackPressed()
-
+            if (editText.text.toString() != "") {
+                val simpleDateFormat = SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH)
+                val date = simpleDateFormat.format(Date(System.currentTimeMillis()))
+                val clipboardEntity =
+                    ClipboardEntity(object_id, editText.text.toString(), Date(System.currentTimeMillis()), date)
+                Toast.makeText(context, editText.text.toString(), LENGTH_SHORT).show()
+                viewModel.updateNote(clipboardEntity)
+                Toast.makeText(context, "Saved!", LENGTH_SHORT).show()
+                activity?.onBackPressed()
+            }else{
+                editText.error = "Text is empty!"
+            }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_main, menu)
+        inflater?.inflate(R.menu.edit_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -98,7 +99,6 @@ class EditClipBoardFragment : Fragment() , View.OnClickListener{
             R.id.action_share -> shareText()
             R.id.action_copy -> copyText()
         }
-
         return super.onOptionsItemSelected(item)
     }
 

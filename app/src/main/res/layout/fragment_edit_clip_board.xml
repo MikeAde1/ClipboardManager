@@ -6,21 +6,26 @@
              tools:context=".view.ui.EditClipBoardFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical">
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
 
-        <EditText
-                android:id="@+id/edit_query"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"/>
+            <EditText
+                    android:id="@+id/edit_query"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:padding="5dp"
+                    android:background="@color/cardview_light_background"/>
 
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_update"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/save"/>
-    </LinearLayout>
-
+            <Button android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_update"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/save"
+            android:background="@drawable/save_button"/>
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>
