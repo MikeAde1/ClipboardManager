@@ -1,6 +1,5 @@
 package com.example.clipboardmanager.view.ui
 
-import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -16,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.clipboardmanager.R
-import com.example.clipboardmanager.service.background.InsertionUtils
 import com.example.clipboardmanager.service.model.ClipboardEntity
 import com.example.clipboardmanager.utils.CustomDateUtils
 import com.example.clipboardmanager.view.adapter.ClipBoardAdapter
