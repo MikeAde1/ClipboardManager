@@ -23,27 +23,15 @@ import com.example.clipboardmanager.viewModel.ClipBoardViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.preference.PreferenceManager
+import org.jetbrains.anko.support.v4.toast
 
 
 class ClipBoardFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-
-        viewModel.getAllNotes().observe(this,
-            Observer<List<ClipboardEntity>> { t ->
-                if (key.equals("date_list")){
-                    val listRange = sharedPreferences.getInt(key, 2)
-                        val sortedList = t?.let { CustomDateUtils.sortList(listRange, it) }
-                        clipBoardAdapter.setNotes(sortedList!!)
-                        Log.d("getAll","")
-                    }
-                })
-
-    }
-
     lateinit var clipBoardAdapter: ClipBoardAdapter
     lateinit var binding: com.example.clipboardmanager.databinding.FragmentMainActivityBinding
-
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var clipBoardList: List<ClipboardEntity>
     private lateinit var viewModel: ClipBoardListViewModel
 
@@ -58,12 +46,9 @@ class ClipBoardFragment : Fragment(), SharedPreferences.OnSharedPreferenceChange
         binding.recycler.layoutManager = LinearLayoutManager(context)
         binding.recycler.setHasFixedSize(true)
         setUpAdapter()
-
         setDeleteOnSwipe()
         return binding.root
     }
-
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -73,10 +58,13 @@ class ClipBoardFragment : Fragment(), SharedPreferences.OnSharedPreferenceChange
             val  date = simpleDateFormat.format(Date(System.currentTimeMillis()))
             viewModel.insertNote((ClipboardEntity(note = text.toString(), date = Date(System.currentTimeMillis()), formattedDate = date, number = 2)))
         }
-        viewModel.getAllNotes().observe(this,
-            Observer<List<ClipboardEntity>> { t ->
-                clipBoardAdapter.setNotes(t!!)
-                Log.d("getAll","")})
+        //fetch the list upon app restart
+        viewModel.getAllNotes().observe(this, Observer<List<ClipboardEntity>> { list ->
+            val listRange = sharedPreferences.getString("date_list", "2")
+                val sortedList = list?.let { CustomDateUtils.sortList(listRange.toInt(), it) }
+                sortedList?.let { clipBoardAdapter.setNotes(it) }
+                        Log.d("getAll","")
+                })
     }
 
     private fun setDeleteOnSwipe() {
@@ -134,5 +122,38 @@ class ClipBoardFragment : Fragment(), SharedPreferences.OnSharedPreferenceChange
 
     fun deleteItem(clipboardEntity: ClipboardEntity) {
         viewModel.delete(clipboardEntity)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+        viewModel.getAllNotes().observe(this,
+            Observer<List<ClipboardEntity>> { list ->
+                if (key.equals("date_list")){
+                    val listRange = sharedPreferences.getString(key, "2")
+                    val sortedList = list?.let { CustomDateUtils.sortList(listRange.toInt(), it) }
+                    sortedList?.let { clipBoardAdapter.setNotes(it) }
+                    Log.d("getAll","")
+                }
+            })
+    }
+
+    private fun setupSharedPreferences() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        this.sharedPreferences = sharedPreferences
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupSharedPreferences()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeSharedPreference()
+    }
+
+    private fun removeSharedPreference(){
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 }

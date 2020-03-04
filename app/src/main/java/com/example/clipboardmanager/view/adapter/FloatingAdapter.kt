@@ -25,7 +25,7 @@ class FloatingAdapter(val floatingClickListener: FloatingClickListener) : Recycl
 
     }
 
-    fun setNotes(list: List<ClipboardEntity>){
+    fun setNotes(list: MutableList<ClipboardEntity>){
        this.clipList = list
         notifyDataSetChanged()
     }

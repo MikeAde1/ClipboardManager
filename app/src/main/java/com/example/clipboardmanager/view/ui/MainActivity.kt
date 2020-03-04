@@ -7,7 +7,6 @@ import com.example.clipboardmanager.service.background.ClipBoardService
 import android.app.ActivityManager
 import com.example.clipboardmanager.R
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
 import com.example.clipboardmanager.service.model.ClipboardEntity
@@ -17,20 +16,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import com.example.clipboardmanager.utils.SessionManager
-
-
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
 class MainActivity : AppCompatActivity(){
 
     private lateinit var serviceIntent: Intent
-    private lateinit var context: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, ClipBoardFragment.newInstance())
@@ -55,6 +50,9 @@ class MainActivity : AppCompatActivity(){
         }*/
     }
 
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(context))
+    }
 
     fun show(clipboardEntity: ClipboardEntity) {
         val editClip = EditClipBoardFragment()
@@ -127,7 +125,7 @@ class MainActivity : AppCompatActivity(){
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.settings_menu -> {
-              startActivity(Intent(this, com.example.clipboardmanager.view.ui.SettingsActivity::class.java))
+              startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             else -> {

@@ -18,6 +18,7 @@ import com.example.clipboardmanager.R
 import com.example.clipboardmanager.service.model.ClipboardEntity
 import com.example.clipboardmanager.viewModel.ClipBoardListViewModel
 import com.example.clipboardmanager.viewModel.ClipBoardViewModelFactory
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -76,7 +77,7 @@ class EditClipBoardFragment : Fragment() , View.OnClickListener{
                 val simpleDateFormat = SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH)
                 val date = simpleDateFormat.format(Date(System.currentTimeMillis()))
                 val clipboardEntity =
-                    ClipboardEntity(object_id, editText.text.toString(), Date(System.currentTimeMillis()), date)
+                    ClipboardEntity(object_id, editText.text.toString().trim(), Date(System.currentTimeMillis()), date)
                 Toast.makeText(context, editText.text.toString(), LENGTH_SHORT).show()
                 viewModel.updateNote(clipboardEntity)
                 Toast.makeText(context, "Saved!", LENGTH_SHORT).show()
