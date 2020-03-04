@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:dist="http://schemas.android.com/apk/distribution"
         xmlns:tools="http://schemas.android.com/tools"
-        package="com.example.clipboardmanager">
+        package="com.mikeade.clipboardmanager">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -15,16 +15,16 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:name=".App"
+            android:name="com.mikeade.clipboardmanager.App"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".view.ui.SettingsActivity"
+        <activity android:name="com.mikeade.clipboardmanager.view.ui.SettingsActivity"
                   android:label="Settings"
-                  android:parentActivityName=".view.ui.MainActivity">
+                  android:parentActivityName="com.mikeade.clipboardmanager.view.ui.MainActivity">
         </activity>
 
-        <activity android:name=".view.ui.MainActivity"
+        <activity android:name="com.mikeade.clipboardmanager.view.ui.MainActivity"
                   android:label="Clipboard Manager"
                   android:launchMode="singleTop">
             <intent-filter>
@@ -40,11 +40,11 @@
         </activity>
 
         <service
-                android:name=".service.background.ClipBoardService"
+                android:name="com.mikeade.clipboardmanager.service.background.ClipBoardService"
                 android:enabled="true"/>
 
         <receiver
-                android:name=".service.AutostartReceiver"
+                android:name="com.mikeade.clipboardmanager.service.AutostartReceiver"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>

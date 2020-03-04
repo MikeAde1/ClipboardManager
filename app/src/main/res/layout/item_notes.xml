@@ -5,9 +5,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type = "com.example.clipboardmanager.utils.CustomDateUtils"/>
+        <import type = "com.mikeade.clipboardmanager.utils.CustomDateUtils"/>
         <variable name="position" type="Integer"/>
-        <variable name="viewModel" type="com.example.clipboardmanager.viewModel.ClipItemViewModel"/>
+        <variable name="viewModel" type="com.mikeade.clipboardmanager.viewModel.ClipItemViewModel"/>
     </data>
     <android.support.v7.widget.CardView
             android:id="@+id/text2"
