@@ -18,14 +18,17 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:padding="5dp"
-                    android:background="@color/cardview_light_background"/>
+                    android:background="#E9E8E8"/>
 
-            <Button android:layout_width="100dp"
+            <Button
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_update"
+                    android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/save"
-            android:background="@drawable/save_button"/>
+                    android:elevation="10dp"
+                    android:background="@drawable/save_button"/>
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
