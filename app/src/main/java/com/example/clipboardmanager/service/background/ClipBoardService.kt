@@ -1,7 +1,6 @@
 package com.example.clipboardmanager.service.background
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.*
 import android.content.*
 import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
@@ -22,23 +21,20 @@ import java.util.*
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
-import android.view.ViewTreeObserver
-import android.graphics.Rect
 import android.os.AsyncTask
-import android.support.annotation.RequiresApi
+import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
-import com.example.clipboardmanager.utils.SessionManager
+import android.widget.Toast.LENGTH_LONG
+import com.example.clipboardmanager.utils.CustomDateUtils
 import com.example.clipboardmanager.view.adapter.FloatingAdapter
-import kotlin.collections.ArrayList
 
 
-class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
+class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var added: Boolean = false
     private var initialX = 0
@@ -62,18 +58,25 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
     private lateinit var floatingLayout: RelativeLayout
     private lateinit var frameLayout:FrameLayout
     private lateinit var params: WindowManager.LayoutParams
-
     private val context: Context = this
+    private lateinit var sharedPreferences: SharedPreferences
+    private var sortedList: MutableList<ClipboardEntity>? = null
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key :String?) {
+        if (key.equals("date_list")){
+            val listRange = sharedPreferences?.getString(key, "2")
+            sortedList =  CustomDateUtils.sortList(listRange?.toInt(), clipBoardRepository.getNotes()).toMutableList()
+        }
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-
     override fun onCreate() {
         super.onCreate()
         setTheme(R.style.AppTheme)
-
+        setupSharedPreferences()
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipBoardRepository = ClipBoardRepository(application)
         clipboard.addPrimaryClipChangedListener(primaryClipChangedListener)
@@ -112,6 +115,17 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
         //use of RX java
         //threads and handlers
         //Cloud FireStore
+    }
+
+    private fun setupSharedPreferences() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        this.sharedPreferences = sharedPreferences
+    }
+
+    private fun removeSharedPreference(){
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -211,8 +225,9 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
 
 
     private fun setUpExpandedLayout() {
-        var clipList: List<ClipboardEntity> = ArrayList()
-        clipList = clipBoardRepository.loadNotes()
+        val listRange = sharedPreferences.getString("date_list", "2")
+        sortedList =  CustomDateUtils.sortList(listRange?.toInt(), clipBoardRepository.getNotes()).toMutableList()
+
         val floatingAdapter = FloatingAdapter(object : FloatingAdapter.FloatingClickListener{
             override fun clickListener(clipboardEntity: ClipboardEntity) {
                 val clip: ClipData = ClipData.newPlainText("simple text", clipboardEntity.note)
@@ -221,7 +236,7 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
             }
         })
         recyclerView.adapter = floatingAdapter
-        floatingAdapter.setNotes(clipList)
+        sortedList?.let { floatingAdapter.setNotes(it) }
     }
 
     @SuppressLint("InflateParams", "ClickableViewAccessibility")
@@ -235,7 +250,6 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
         closeButton = mFloatingLayout.findViewById(R.id.close_btn)
         closeExpandedView = mFloatingLayout.findViewById(R.id.expanded_close_btn)
         closeButton.setOnClickListener(this)
-        //imageView.setOnClickListener(this)
         floatingLayout.setOnTouchListener(this)
         closeExpandedView.setOnClickListener(this)
 
@@ -288,7 +302,7 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
     private val primaryClipChangedListener = object: ClipboardManager.OnPrimaryClipChangedListener{
         override fun onPrimaryClipChanged() {
 
-            var pasteData: String = ""
+            val pasteData: String
             if (clipboard.hasPrimaryClip() && clipboard.primaryClipDescription!!.hasMimeType(MIMETYPE_TEXT_PLAIN)){
                 val item = clipboard.primaryClip?.getItemAt(0)?.text
                 pasteData = item.toString()
@@ -302,7 +316,7 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
     }
 
     private fun checkForDuplicate(pasteData: String) {
-        val list: List<ClipboardEntity> = clipBoardRepository.loadNotes()
+        val list = clipBoardRepository.getNotes()
         val size = list.size
         Log.d("######", size.toString())
 
@@ -314,31 +328,20 @@ class ClipBoardService : Service(),View.OnTouchListener, View.OnClickListener {
             }
         }
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-DD", Locale.ENGLISH)
-        //val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val  date = simpleDateFormat.format(Date(System.currentTimeMillis()))
         val clipboardEntity = ClipboardEntity(note = pasteData, date = Date(System.currentTimeMillis()), formattedDate = date, number = copies)
         clipBoardRepository.insert(clipboardEntity)
         mPreviousText = pasteData
-        Toast.makeText(applicationContext, "New note copied: $pasteData\nNote has been copied $copies times" , LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "New note copied: $pasteData\nNote has been copied $copies times" , LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
         Log.w("ClipboardService", "Service is closing")
         windowManager.removeView(mFloatingLayout)
+        removeSharedPreference()
         super.onDestroy()
     }
 
-   /* override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?){
-        val sessionManager = SessionManager(this)
-
-        Toast.makeText(applicationContext, "changed", LENGTH_SHORT).show()
-        if (sharedPreferences.getBoolean("active", true)){
-            windowManager.addView(mFloatingLayout, params)
-        }else{
-            windowManager.removeView(mFloatingLayout)
-        }
-    }
-*/
     class ForegroundCheckTask: AsyncTask<Context, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Context): Boolean {
