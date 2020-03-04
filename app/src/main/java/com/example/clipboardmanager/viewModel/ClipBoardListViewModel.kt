@@ -1,17 +1,13 @@
 package com.example.clipboardmanager.viewModel
 
-import android.app.AlertDialog
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
-import android.widget.Adapter
 import com.example.clipboardmanager.service.repository.ClipBoardRepository
 import com.example.clipboardmanager.service.model.ClipboardEntity
-import com.example.clipboardmanager.view.ui.MainActivity
 
-class ClipBoardListViewModel(val context: Context) : ViewModel() {
+class ClipBoardListViewModel(context: Context) : ViewModel() {
 
     private var repository: ClipBoardRepository = ClipBoardRepository(context.applicationContext)
 
@@ -19,8 +15,8 @@ class ClipBoardListViewModel(val context: Context) : ViewModel() {
         repository.delete(clipboardEntity)
     }
 
-
-    fun getAllNotes(): LiveData<List<ClipboardEntity>>{
+    //notes with 20days and earlier -- not used for now
+    private fun getFilteredNotes(): LiveData<List<ClipboardEntity>>{
         return repository.getAllNotes()
     }
 
@@ -37,15 +33,17 @@ class ClipBoardListViewModel(val context: Context) : ViewModel() {
         repository.insert(clipboardEntity)
     }
 
-    /*fun getAdapter(): Adapter{
-
-    }*/
     fun getNoteAtPosition(position:Int): String?{
-        return getAllNotes().value?.get(position)?.note
+        return getFilteredNotes().value?.get(position)?.note
     }
 
     fun getTimeAtPosition(position: Int): Long?{
-        return getAllNotes().value?.get(position)?.date?.time
+        return getFilteredNotes().value?.get(position)?.date?.time
+    }
+
+    //all notes
+    fun getAllNotes(): LiveData<List<ClipboardEntity>>{
+        return repository.loadNotes()
     }
 
     /*fun createDialog(context: Context,clipboardEntity: ClipboardEntity) {

@@ -76,21 +76,32 @@ class ClipBoardRepository(context: Context) {
         }
     }
 
-    internal class LoadNoteAsyncTask(copiedDao: ClipBoardDao):  AsyncTask<Unit, Unit, List<ClipboardEntity>>(){
-        var note: List<ClipboardEntity> = emptyList()
+    //for unfiltered list of services
+    private class LoadNoteAsyncTask(copiedDao: ClipBoardDao):  AsyncTask<Unit, Unit, LiveData<List<ClipboardEntity>>>(){
         val copied_dao = copiedDao
-        override fun doInBackground(vararg params: Unit?): List<ClipboardEntity> {
+        override fun doInBackground(vararg params: Unit?): LiveData<List<ClipboardEntity>> {
            return copied_dao.selectNotes()
-        }
-        override fun onPostExecute(result: List<ClipboardEntity>) {
-             note = result
         }
     }
 
-    fun loadNotes(): List<ClipboardEntity>{
+    fun loadNotes(): LiveData<List<ClipboardEntity>>{
         //note = clipDao.selectNotes()
         return LoadNoteAsyncTask(clipDao).execute().get()
         /*Log.d("####", note.toString())
         return note*/
     }
+
+
+    //for background service
+    fun getNotes(): List<ClipboardEntity>{
+        return LoadAllNotesAsyncTask(clipDao).execute().get()
+    }
+
+    private class LoadAllNotesAsyncTask(copiedDao: ClipBoardDao):  AsyncTask<Unit, Unit, MutableList<ClipboardEntity>>(){
+        val copied_dao = copiedDao
+        override fun doInBackground(vararg params: Unit?): MutableList<ClipboardEntity> {
+            return copied_dao.getNotes()
+        }
+    }
+
 }
