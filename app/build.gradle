@@ -45,6 +45,9 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.android.support:preference-v14:25.3.1'
 
+    implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
+    implementation "org.jetbrains.anko:anko:0.10.8"
+
     // Room components
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     //annotationProcessor "android.arch.persistence.room:runtime:$rootProject.roomVersion"
