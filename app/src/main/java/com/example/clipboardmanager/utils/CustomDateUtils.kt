@@ -82,25 +82,32 @@ class CustomDateUtils {
             return false
         }
 
-        fun sortList(day:Int, clipList: List<ClipboardEntity>): List<ClipboardEntity>{
+        fun sortList(day:Int?, clipList: List<ClipboardEntity>): List<ClipboardEntity>{
             val filteredList: MutableList<ClipboardEntity> = ArrayList()
             val calendar = Calendar.getInstance()
 
-            if (day != 20) {
-                calendar.add(Calendar.MONTH, -day)
-                val date = calendar.time
-                for (notes in 0 until clipList.size){
-                    if ((clipList[notes].date) < date){
-                    filteredList.add(clipList[notes])
+            when (day) {
+                1 -> {
+                    calendar.add(Calendar.MONTH, -day)
+                    val date = calendar.time
+                    for (notes in 0 until clipList.size){
+                        //if note taken was after one month ago
+                        if ((clipList[notes].date).after(date)){
+                            filteredList.add(clipList[notes])
+                        }
                     }
                 }
-            }else{
-                calendar.add(Calendar.DATE, -day)
-                val date = calendar.time
-                for (notes in 0 until clipList.size){
-                    if ((clipList[notes].date) < date){
-                        filteredList.add(clipList[notes])
+                20 -> {
+                    calendar.add(Calendar.DATE, -day)
+                    val date = calendar.time
+                    for (notes in 0 until clipList.size){
+                        if ((clipList[notes].date).after(date)){
+                            filteredList.add(clipList[notes])
+                        }
                     }
+                }
+                else -> for (notes in 0 until clipList.size){
+                    filteredList.add(clipList[notes])
                 }
             }
             return filteredList
