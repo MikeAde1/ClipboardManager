@@ -11,5 +11,5 @@
             android:id="@+id/action_share"
             android:icon="@drawable/ic_share_black_24dp"
             android:title="@string/action_share"
-            app:showAsAction="always" />
+            app:showAsAction="never" />
 </menu>
