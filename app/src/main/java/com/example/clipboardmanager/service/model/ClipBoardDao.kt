@@ -22,6 +22,9 @@ import android.arch.persistence.room.*
         @Query("SELECT * FROM word_table WHERE id = :id")
         fun loadDataById(id: Int): LiveData<ClipboardEntity>
 
-        @Query("SELECT note,time,formattedDate,duplicated FROM word_table")
-        fun selectNotes(): List<ClipboardEntity>
+        @Query("SELECT * FROM word_table ORDER BY id DESC")
+        fun selectNotes(): LiveData<List<ClipboardEntity>>
+
+        @Query("SELECT note,time,formattedDate,duplicated FROM word_table Order by id desc")
+        fun getNotes(): MutableList<ClipboardEntity>
     }
